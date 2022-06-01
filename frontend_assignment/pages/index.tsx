@@ -5,6 +5,8 @@ import { providers } from "ethers"
 import Head from "next/head"
 import React from "react"
 import styles from "../styles/Home.module.css"
+import { Formik } from "formik";
+import * as Yup from "yup";
 
 export default function Home() {
     const [logs, setLogs] = React.useState("Connect your wallet and greet!")
@@ -71,7 +73,95 @@ export default function Home() {
                 <h1 className={styles.title}>Greetings</h1>
 
                 <p className={styles.description}>A simple Next.js/Hardhat privacy application with Semaphore.</p>
+     <Formik
 
+      initialValues={{ name: "", age: 0, address: ""}}
+      onSubmit={async values => {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        alert(JSON.stringify(values, null, 2));
+        console.log(JSON.stringify(values, null, 2));
+      }}
+      validationSchema={Yup.object().shape({
+        name: Yup.string().required(),
+        age:  Yup.number().required().positive().integer(),
+        address:  Yup.string().required()
+      })}
+    >
+      {props => {
+        const {
+          values, touched, errors, isSubmitting,
+          handleChange, handleSubmit
+        } = props;
+        return (
+          <form onSubmit={handleSubmit}>
+            <label htmlFor="name" style={{ display: "block" }}>
+              NAME
+            </label>
+
+            <input
+              id="name"
+              placeholder="name"
+              type="text"
+              value={values.name}
+              onChange={handleChange}              
+              className={
+                errors.name && touched.name
+                  ? "text-input error"
+                  : "text-input"
+              }
+            />
+            {errors.name  && touched.name && (
+              <div className="input-feedback">{errors.name}</div>
+            )}
+
+            <label htmlFor="age" style={{ display: "block" }}>
+              AGE
+            </label>
+
+            <input
+              id="age"
+              placeholder="age"
+              type="number"
+              value={values.age}
+              onChange={handleChange}            
+              className={
+                errors.age && touched.age
+                  ? "text-input error"
+                  : "text-input"
+              }
+            />
+            {errors.age  && touched.age && (
+              <div className="input-feedback">{errors.age}</div>
+            )}
+
+            <label htmlFor="address" style={{ display: "block" }}>
+           ADDRESS
+            </label>
+
+            <input
+              id="address"
+              placeholder="address"
+              type="text"
+              value={values.address}
+              onChange={handleChange}
+              className={
+                errors.address && touched.address
+                  ? "text-input error"
+                  : "text-input"
+              }
+            />
+            {errors.address  && touched.address && (
+              <div className="input-feedback">{errors.address}</div>
+            )}
+
+    
+            <button type="submit" disabled={isSubmitting}>
+              Submit
+            </button>
+          </form>
+        );
+      }}
+    </Formik>
                 <div className={styles.logs}>{logs}</div>
 
                 <div onClick={() => greet()} className={styles.button}>
